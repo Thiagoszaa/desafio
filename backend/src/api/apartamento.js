@@ -19,6 +19,12 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ erro: 'Número do apartamento é obrigatório' })
     }
 
+    const jaExiste = await apartamento.findOne({ where: { numero } })
+
+    if (jaExiste) {
+      return res.status(409).json({ erro: 'Já existe um apartamento com esse número' })
+    }
+
     const novoApartamento = await apartamento.create({
       numero,
       estado: 'LIVRE'
@@ -29,6 +35,7 @@ router.post('/', async (req, res) => {
     res.status(500).json({ erro: err.message })
   }
 })
+
 
 router.put('/:id', async (req, res) => {
   try {

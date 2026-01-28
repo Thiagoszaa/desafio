@@ -17,24 +17,39 @@ function App() {
     carregarApartamentos()
   }, [])
 
-  const salvarApartamento = () => {
-    if (!numero) return
-
-
-    if (editId) {
-      api.put(`/api/apartamento/${editId}`, { numero, estado })
-        .then(() => {
-          resetForm()
-          carregarApartamentos()
-        })
-    } else {
-      api.post('/api/apartamento', { numero, estado })
-        .then(() => {
-          resetForm()
-          carregarApartamentos()
-        })
-    }
+const salvarApartamento = () => {
+  if (!numero) {
+    alert('Informe o número do apartamento')
+    return
   }
+
+  if (editId) {
+    api.put(`/api/apartamento/${editId}`, { numero, estado })
+      .then(() => {
+        alert('Apartamento atualizado com sucesso!')
+        resetForm()
+        carregarApartamentos()
+      })
+      .catch(() => {
+        alert('Erro ao atualizar apartamento')
+      })
+  } else {
+    api.post('/api/apartamento', { numero, estado })
+      .then(() => {
+        alert('Apartamento cadastrado com sucesso!')
+        resetForm()
+        carregarApartamentos()
+      })
+      .catch(err => {
+        if (err.response?.status === 409) {
+          alert(err.response.data.erro) 
+        } else {
+          alert('Erro ao cadastrar apartamento')
+        }
+      })
+  }
+}
+
     const editarApartamento = (ap) => {
     setNumero(ap.numero)
     setEstado(ap.estado)
